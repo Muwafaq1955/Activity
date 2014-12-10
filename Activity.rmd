@@ -1,0 +1,28 @@
+echo = TRUE
+setwd("~/desktop/R Ex")
+activity <- read.csv("Activity.csv")
+totals<-aggregate(steps~date, data=activity, sum, na.rm=TRUE)
+mean(totals$steps)
+###
+median(totals$steps)
+###
+hist(totals$steps, col = c(1,2,3,4,5))
+interval<-aggregate(steps~interval, data=activity, mean, na.rm=TRUE)
+plot(steps~interval, data=interval, col=c(4), type="l")
+interval[which.max(interval$steps), ]$interval
+###
+sum(is.na(activity$steps))
+###
+missing<-function(interval){
+  totals[totals$interval$interval == interval, ]$steps
+}
+activity$day=ifelse(as.POSIXlt(as.Date(activity$date))$wday%%6==0, "weekend", "weekday")
+activity$day=factor(activity$day, levels=c("weekday", "weekend"))
+interval=aggregate(steps~interval+ day, activity, mean)
+library(lattice)
+### lattice.options(default.theme = standard.theme(color = FALSE))
+sb <- trellis.par.get("strip.background") 
+    sb[["col"]][1] <- "Yellow"
+    trellis.par.set("strip.background", sb) 
+xyplot(steps~interval | factor(day), data=interval, aspect=1/2, type="l")
+
